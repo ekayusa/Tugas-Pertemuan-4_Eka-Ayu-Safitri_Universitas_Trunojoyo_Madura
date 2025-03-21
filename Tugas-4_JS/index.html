@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Transportasi</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to left, #092e73, #4a5057);
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.36);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #17a839;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #207b33;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.23);
+            width: 300px;
+            text-align: left;
+        }
+        .card p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Sistem Manajemen Transportasi 🚂</h1>
+        <form id="rentalForm">
+            <input type="text" id="nama" placeholder="Nama Pelanggan" required>
+            <input type="text" id="nomorTelepon" placeholder="Nomor Telepon" required>
+            <select id="kendaraanDisewa" onchange="updateMerek()">
+                <option value="Sepeda">🚴 Sepeda</option>
+                <option value="Sepeda Motor">🏍️ Sepeda Motor</option>
+                <option value="Mobil">🚗 Mobil</option>
+                <option value="Truk">🚛 Truk</option>
+                <option value="Bus">🚌 Bus</option>
+                <option value="Kereta Api">🚆 Kereta Api</option>
+                <option value="Pesawat Terbang">✈️ Pesawat Terbang</option>
+                <option value="Kapal Laut">🚢 Kapal Laut</option>
+            </select>
+            <select id="merekKendaraan"></select>
+            <input type="date" id="tanggalSewa" required>
+            <button type="submit">Sewa Kendaraan</button>
+        </form>
+        
+        <h2>📜 Daftar Pelanggan</h2>
+        <div class="card-container" id="daftarPelanggan"></div>
+    </div>
+    
+    <footer>
+        Eka Ayu Safitri - Universitas Trunojoyo Madura
+    </footer>
+
+    <script>
+        class Pelanggan {
+            constructor(nama, nomorTelepon, kendaraanDisewa, merekKendaraan, tanggalSewa) {
+                this.nama = nama;
+                this.nomorTelepon = nomorTelepon;
+                this.kendaraanDisewa = kendaraanDisewa;
+                this.merekKendaraan = merekKendaraan;
+                this.tanggalSewa = tanggalSewa;
+            }
+        }
+
+        const daftarPelanggan = [];
+
+        function updateMerek() {
+            const kendaraan = document.getElementById("kendaraanDisewa").value;
+            const merekSelect = document.getElementById("merekKendaraan");
+            merekSelect.innerHTML = "";
+            
+            const merekList = {
+                "Sepeda": ["Polygon", "United", "Wimcycle"],
+                "Sepeda Motor": ["Honda Vario", "Yamaha NMAX", "Kawasaki Ninja"],
+                "Mobil": ["Toyota Avanza", "Honda Civic", "Suzuki Ertiga"],
+                "Truk": ["Hino Dutro", "Isuzu Elf", "Mitsubishi Fuso"],
+                "Bus": ["Mercedes-Benz", "Scania", "Hino"],
+                "Kereta Api": ["KAI Ekonomi", "KAI Eksekutif", "KAI Luxury"],
+                "Pesawat Terbang": ["Garuda Indonesia", "Lion Air", "AirAsia"],
+                "Kapal Laut": ["PELNI", "ASDP Ferry", "KM Kelud"]
+            };
+            
+            merekList[kendaraan].forEach(merek => {
+                const option = document.createElement("option");
+                option.value = merek;
+                option.textContent = merek;
+                merekSelect.appendChild(option);
+            });
+        }
+
+        function tambahPelanggan(nama, nomorTelepon, kendaraanDisewa, merekKendaraan, tanggalSewa) {
+            const pelangganBaru = new Pelanggan(nama, nomorTelepon, kendaraanDisewa, merekKendaraan, tanggalSewa);
+            daftarPelanggan.push(pelangganBaru);
+            perbaruiDaftarPelanggan();
+        }
+
+        function perbaruiDaftarPelanggan() {
+            const container = document.getElementById("daftarPelanggan");
+            container.innerHTML = "";
+            daftarPelanggan.forEach(pelanggan => {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.innerHTML = `<p>📌 Nama: ${pelanggan.nama}</p>
+                                  <p>📞 Telepon: ${pelanggan.nomorTelepon}</p>
+                                  <p>🚗 Kendaraan: ${pelanggan.kendaraanDisewa}</p>
+                                  <p>🏷️ Merek: ${pelanggan.merekKendaraan}</p>
+                                  <p>📅 Tanggal Sewa: ${pelanggan.tanggalSewa}</p>`;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById("rentalForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const nama = document.getElementById("nama").value;
+            const nomorTelepon = document.getElementById("nomorTelepon").value;
+            const kendaraanDisewa = document.getElementById("kendaraanDisewa").value;
+            const merekKendaraan = document.getElementById("merekKendaraan").value;
+            const tanggalSewa = document.getElementById("tanggalSewa").value;
+            tambahPelanggan(nama, nomorTelepon, kendaraanDisewa, merekKendaraan, tanggalSewa);
+            document.getElementById("rentalForm").reset();
+        });
+        
+        updateMerek();
+    </script>
+</body>
+</html>
